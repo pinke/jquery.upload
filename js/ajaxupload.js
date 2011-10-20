@@ -20,15 +20,20 @@ function get(element){
 /**
  * Attaches event to a dom element
  */
-function addEvent(el, type, fn){
-	if (w.addEventListener){
-		el.addEventListener(type, fn, false);
-	} else if (w.attachEvent){
-		var f = function(){
-		  fn.call(el, w.event);
-		};			
-		el.attachEvent('on' + type, f)
-	}
+function addEvent(el, typeStr, fn) {
+    var types = typeStr.split(' ');
+    for (var i = 0; i < types; i++) {
+        var type = types[i];
+        if(!type)continue;
+        if (w.addEventListener) {
+            el.addEventListener(type, fn, false);
+        } else if (w.attachEvent) {
+            var f = function() {
+                fn.call(el, w.event);
+            };
+            el.attachEvent('on' + type, f)
+        }
+    }
 }
 
 
@@ -500,7 +505,7 @@ AjaxUpload.prototype = {
 			this._createInput();
 			
 			var toDeleteFlag = false;
-            $(iframe).bind('load error', function(e) {
+            addEvent(iframe,'load error', function(e) {
                 try {
                 if (// For Safari
                     iframe.src == "javascript:'%3Chtml%3E%3C/html%3E';" ||
